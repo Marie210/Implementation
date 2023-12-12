@@ -110,6 +110,8 @@ class broker:
                         mes.remainingRecipientNumber -=1
                         if mes.remainingRecipientNumber <1:
                             elem.messageList.remove(mes)
+            else:
+                txt = "Connection succeeded"
             print(f"{msg} connected")
         return txt
 
@@ -164,6 +166,8 @@ class broker:
                         self.usersSubscriptions[userName].append(self.listOfTopics[i])
                     else:
                         self.usersSubscriptions[userName] = [self.listOfTopics[i]]
+
+            print(f"{userName} subscribed to all topic begining with {prefix}")
 
         return "Subscription completed"
 

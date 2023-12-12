@@ -43,12 +43,12 @@ class client:
 
     def decypherMsg(self, msg, respPoint):
 
-        print(f"idPoint: {self.deviceIdPoint}")
+        print(f"Device ID Point: {self.deviceIdPoint}")
 
         keyPoint = tbp.eta.pairing(self.deviceIdPoint[1], self.deviceIdPoint[2], respPoint[0], respPoint[1])
-        print(f"keyPoint: {keyPoint}")
+        print(f"Pairing result: {keyPoint}")
         key = transformationCoordinateToKey(keyPoint)
-        print(f"key: {key}")
+        print(f"Key: {key}")
         fernet = Fernet(key)
 
         decr_data = fernet.decrypt(bytes(msg[2:len(msg)-1], 'utf-8') ).decode('utf-8')
@@ -72,7 +72,6 @@ class client:
             await websocket.send(message)
 
             response = await websocket.recv()
-            print(response)
             num = response[0]
             if num == "0":
                 print(f"Client received response: {response[1:]}")
@@ -107,14 +106,13 @@ class client:
             await websocket.send(topic)
             print(f"Client asks for permission to access topic {topic}")
             token = await websocket.recv()
-            print(f"check tok: {token}")
+
             subjectName = token[token.find("###") + 3:]
             a = token[token.find(" ")+1:token.find('###')-2]
-            b = a[:int((len(a)-3)/2)]
-            c = a[int((len(a))/2):len(a)]
+            b = a[:a.find(']]')+2]
+            c = a[a.find('[[', 2):]
             token = [loads(b), loads(c)]
-            print(f"check : {token}")
-            print(f"Admin gave the token: {token} and the topic is linked to the subject {subjectName}")
+            print(f"Admin gave the token: {token} \n and the topic is linked to the subject {subjectName}")
 
         return token, subjectName
 
@@ -128,14 +126,13 @@ class client:
 
 cli = client("Sophie")
 
-
 responseList, toplist = cli.messageExchangeBroker(cli.connectMsg())
+
+
 
 tokenList = []
 subjectList = []
 for elem in toplist:
-    print(type(elem))
-    print(elem)
     token, subjectName = cli.messageExchangeAdmin(elem)
     tokenList.append(token)
     subjectList.append(subjectName)
@@ -149,15 +146,14 @@ for i in range(len(responseList)):
 
 resp = cli.messageExchangeBroker(cli.subscribeMsg("Pref/#"))
 
+
+
+
 '''
 
-
-
-
 '''
-top = b'I\xca\xdfSl\xca\xce\xf2/\xf0\xf8\xe7|\xfa\x8a\x0c\x9d$\xc2\x99'
+top = b'\xf4\xf2v\xb4\xdb\xde\xd4\xa8\x12\x12\xc3\x84YJ\x19|\xcc\x15o\x89'
 token = cli.messageExchangeAdmin(top)
-
 
 '''
 '''

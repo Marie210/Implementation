@@ -46,11 +46,10 @@ class admin:
         self.userIdPoint = tbp.ecc.scalar_mult(userIdPointValue, self.eccGenerator)
 
     def generateToken(self, topName, i, j):
-        print(f"resp in bytes : {self.deviceResponseList[i][j]}")
+        print(f"Response in bytes : {self.deviceResponseList[i][j]}")
         resp = int.from_bytes(self.deviceResponseList[i][j], 'big')
-        print(f"resp: {resp}")
         token = tbp.ecc.scalar_mult(resp, self.userIdPoint)
-        print(token)
+        print(f'Token : {token}')
         return token
 
     def verifyPSSWRD(self, psswrd, user):
@@ -62,16 +61,13 @@ class admin:
     def verifyIfUserAuthorized(self, user, topic):
 
         i, j = 0, 0
-        print(type(topic))
         for elem in self.deviceChallengeList:
             if topic in elem:
                 i = self.deviceChallengeList.index(elem)
-                print(i)
                 j = elem.index(topic)
 
         if self.deviceSubjectList[i] in self.userAuthorization[user]:
             token = self.generateToken(topic, i, j)
-            print(token)
             return (True, token, self.deviceSubjectList[i])
         else:
             return (False, 0, "Not authorized")
@@ -84,7 +80,7 @@ class admin:
         async for message in websocket:
             user = message[:message.find(' ')]
             psswrd = message[message.find(' ')+1:]
-            print(f"Broker demand of connection from {user}")
+            print(f"Receive demand of connection from {user}")
             if self.verifyPSSWRD(psswrd, user) == True:
                 print(f"Password accepted, authentication succeeded")
                 await websocket.send(f"Password accepted, authentication succeeded")

@@ -89,20 +89,17 @@ class device:
 
         resp = int.from_bytes(self.responseList[i][j], 'big')
         a = tbp.ecc.scalar_mult(resp, self.idPoint)
-        print(f"resp: {resp}")
-        print(f"idPoint: {self.idPoint}")
-        print(f"userIdPoint: {self.userIdPoint}")
+        print(f"Response: {resp}")
+        print(f"Device ID Point: {self.idPoint}")
+        print(f"User ID Point: {self.userIdPoint}")
         key = tbp.eta.pairing(a[1], a[2], self.userIdPoint[1], self.userIdPoint[2])
-        print(f"keyPoint: {key}")
+        print(f"Result of the pairing: {key}")
 
         key = transformationCoordinateToKey(key)
 
-        print(f"key: {key}")
+        print(f"Key: {key}")
         fernet = Fernet(key)
         encMessage = fernet.encrypt(msg.encode())
-        decrMessag = fernet.decrypt(encMessage)
-        print(decrMessag)
-
 
         return encMessage
 
@@ -132,7 +129,12 @@ class device:
 
 dev = device("i")
 
-dev.publishMessage( "Alert", "coucou")
+print("Device wants to send message 'Hello' to topic 'Alert' \n" )
+dev.publishMessage( "Alert", "Hello")
+print("Device wants to send message 'This is a test' to topic 'Alert' \n" )
+dev.publishMessage( "Alert", "This is a test")
+print("Device wants to send message 'his is the SOC' to topic 'StateOfCharge' \n" )
+dev.publishMessage( "StateOfCharge", "This is the SOC")
 
 '''
 topName = b'\xb9ih\nIC\xd3\xe0\xdd(\xecG8\x7f\x13\x15\x04\xca\x16x'
