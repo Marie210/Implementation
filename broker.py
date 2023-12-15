@@ -1,6 +1,10 @@
 import asyncio
 import websockets
-
+import time
+import hashlib
+import tate_bilinear_pairing as tbp
+from tate_bilinear_pairing import eta
+from json import loads
 
 
 class MqttMsg():
@@ -61,6 +65,8 @@ class broker:
                                  b'\xd3\x1b\xb9\x1d\x8f\xd0n"Z\xbf\xda\x9axc9\xd1Y\xa1P\xd4']
 
         self.listOfTopicsName = []
+        tbp.eta.init(151)
+        self.eccGenerator = tbp.ecc.gen()
 
         for i in range(len(self.listOfTopicsNameBytes)):
             self.listOfTopicsName.append("Pref/" + str(self.listOfTopicsNameBytes[i])[2:len(str(self.listOfTopicsNameBytes[i])) - 1])
@@ -72,6 +78,14 @@ class broker:
             self.listOfTopics.append(top)
         self.usersSubscriptions = {}
 
+        self.authenticationTokensForI = [[False, [[1657607087252870156, 9697755170], [611614477922732962, 6676516445]], [[2035777263628326977, 10042491362], [4831025468378457656, 4833974288]]], [False, [[8301543868247636611, 11343050024], [326561280007996724, 5641341010]], [[3477498544842109060, 1669632805], [5585995570719425849, 12885435594]]], [False, [[5845300779817501708, 4395660996], [3360038166827897456, 11425941802]], [[812627887216006674, 9180953490], [6093569379130779944, 6849380388]]], [False, [[1081744903690277040, 9098084897], [3480304657523281409, 5924469208]], [[342279997115508864, 13056912710], [5779780803734339648, 831984169]]], [False, [[1325229824852183084, 1184990229], [4725067753095300161, 289551072]], [[2455646067678300578, 2892449417], [919649261002622556, 4588611586]]], [False, [[4738780938307529476, 15502574594], [2305919721893527634, 587729812]], [[95895395045736708, 4834516221], [7650211158559942840, 10049888258]]], [False, [[2306586382255243608, 8834460737], [5910211181585115175, 6466044202]], [[4118683358611506208, 4373874964], [163649448870973577, 12214424771]]], [False, [[6325603581015660451, 9275912260], [15270020315037724, 1141378344]], [[77305035832299658, 2784576385], [5944780201539420789, 8858666000]]], [False, [[654218236338954392, 7103732293], [8397424918252030209, 1208067090]], [[72098898846325849, 9793831148], [2334564598521275046, 4701053200]]], [False, [[8925872105015338022, 11159855664], [9016049038919824, 4912584130]], [[3332808958866438596, 321421447], [4721024926780522544, 12026336376]]], [False, [[4759616516854041202, 10069026888], [671142232954504576, 663753222]], [[1168986481949321988, 7797298460], [378378118164989115, 573745251]]], [False, [[4743786843253390315, 12890703762], [2029028546773860352, 2535872613]], [[685752501831552009, 2818867297], [8098461935562424848, 4358421776]]], [False, [[1369480429362908613, 5876390433], [7318383898996746, 10737754458]], [[5805150280271013890, 6494261768], [3264812944259421840, 10341130610]]], [False, [[7684105270520593792, 4355477538], [1464796471385129005, 2617286657]], [[334537425102110780, 13691523112], [5357921467901178752, 23830533]]], [False, [[2603259152323207188, 3945889824], [6525522904946379307, 13166734605]], [[460493547331078752, 444624448], [619916802477569438, 5457482158]]], [False, [[14636830494430728, 10604261893], [8431358077333463335, 6470536240]], [[7534629920443523411, 15575859277], [1543639559360286212, 1133124656]]], [False, [[940182268956744614, 15469285409], [5918011471384830977, 612704960]], [[191474614564571315, 8670292229], [4401584817554629636, 841339490]]], [False, [[290483978039824454, 8692078876], [6954523248085959080, 566846466]], [[6253398579474567233, 8123318541], [2892496297161672876, 8728708176]]], [False, [[3157410424380342273, 3758361248], [5775890720091020066, 4642795599]], [[1712852778116271106, 3364069448], [2882488999208817192, 623138096]]], [False, [[77839139988883473, 10593484], [8395593738788864846, 11694770451]], [[1229240258410846026, 270024721], [171352441726476336, 14592181192]]], [False, [[6125048823330262352, 9672665121], [2484602176683442824, 420631242]], [[532200329190684809, 9664212736], [8653983936248562688, 2816606219]]], [False, [[6221314453390158383, 4380436224], [2927465602237072768, 37916828]], [[5424700136738251328, 8658002502], [3472718501796647958, 4180743344]]], [False, [[442576945159741610, 2181096516], [7044108897507845, 8937083139]], [[8648746443047073803, 9169550387], [238797297683629232, 3558031692]]], [False, [[622627107956100352, 5913535540], [1243567168161800795, 327287243]], [[725859130598441890, 8597704992], [1245571265292408837, 2961186844]]], [False, [[8403340942700046504, 8592574741], [27303670925099523, 1775502954]], [[476705455365693959, 2417033730], [604081036099622040, 13581326737]]], [False, [[1171504636134555660, 8627700752], [5705386233369262080, 2090207296]], [[334412690182311364, 6513396224], [5213589908040204859, 278792]]], [False, [[1021773592671853764, 9127906563], [5787598398020584224, 1428619972]], [[5504646158057806282, 14509263620], [1267782297895838256, 2298618904]]], [False, [[623328707159696873, 3319794321], [8162906640825211412, 537076770]], [[5992071327543066637, 13627693076], [307443287447662722, 312517224]]], [False, [[5765976214489556544, 6047142176], [3101574984601241900, 8959165007]], [[2936524067085353028, 2307458371], [4693108015708616193, 4333802044]]], [False, [[8822851718686850056, 2391423057], [324869406849041234, 5912249640]], [[4614053267511747143, 1399660821], [4455911991605199880, 13027508928]]]]
+
+
+    def unpackECPoint(self, a):
+        b = a[a.find('[['):a.find(']]') + 2]
+        c = a[a.find('[[', 11):len(a)-1]
+        point = [loads(b), loads(c)]
+        return point
 
     def newTopic(self, name):
         print(f"new topic {name}")
@@ -95,6 +109,7 @@ class broker:
     def connect(self, msg):
 
         if msg[0:6] == "device":
+
             print(f"{msg} connected")
             txt = "Connection succeeded"
         else:
@@ -115,24 +130,41 @@ class broker:
             print(f"{msg} connected")
         return txt
 
-    def publish(self, msg):
+    def publish(self, msg, S, Hpoint):
         a = 0
         top = msg[0: msg.find(' ')]
         content = msg[msg.find(' ')+1:]
+        ind = 0
+
+
+        pairing1 = tbp.eta.pairing(self.eccGenerator[1], self.eccGenerator[2], S[0], S[1])
+        print(f"Pairing 1 : {pairing1}")
+        print(f"top : {top}")
         for i in range(len(self.listOfTopicsName)):
             if top == self.listOfTopicsName[i]:
                 a = 1
                 mes = MqttMsg(content, len(self.listOfTopics[i].subscribersList))
-                self.listOfTopics[i].messageList.append(mes)
-                print(f"{mes.content} PUBLISHED ON {self.listOfTopicsName[i]}")
-
+                ind = i
+                print(i)
+        '''
         if a == 0:
             self.newTopic(top)
             mes = MqttMsg(content, 0)
-            self.listOfTopics[len(self.listOfTopics)-1].messageList.append(mes)
-            print(f"{mes.content} PUBLISHED ON {self.listOfTopicsName[len(self.listOfTopics)-1]}")
+            ind = len(self.listOfTopics)-1
+        '''
+        print(ind)
+        PK = self.authenticationTokensForI[ind]
+        print(f"Pij : {PK}")
+        pairing2 = tbp.eta.pairing(Hpoint[1], Hpoint[2], PK[1], PK[2])
+        print(f"Pairing 2 : {pairing2}")
+        if pairing2 == pairing1:
+            self.listOfTopics[ind].messageList.append(mes)
+            print(f"MESSAGE {mes.content} \n IS PUBLISHED ON {self.listOfTopicsName[ind]}")
+            return "Successful publish"
+        else:
+            return "Publish not allowed"
 
-        return "Successful publish"
+
 
 
     def subscribe(self, topName, userName):
@@ -173,13 +205,13 @@ class broker:
 
 
 
-    def receivedMsg(self, msg):
+    def receivedMsg(self, msg, websocket):
         resp= 0
         flag = int(msg[0])
         if flag == 1:
             resp = self.connect(msg[2:])
-        elif flag ==3:
-            resp = self.publish(msg[2:])
+        #elif flag ==3:
+           # resp = self.publish(msg[2:], websocket)
         elif flag == 8:
             resp = self.subscribe(msg[2:msg.find(" ",2)], msg[msg.find(" ", 2)+1 :])
         else:
@@ -188,9 +220,26 @@ class broker:
 
 
     async def handler(self, websocket):
+        resp = "Problem"
         async for message in websocket:
             print(f"Admin received message: {message}")
-            resp = self.receivedMsg(message)
+            flag = int(message[0])
+            if flag == 3:
+                sigma = str(time.time()).encode("utf-8")
+                print(f"Broker sends timestamp: {sigma}")
+                await websocket.send(sigma)
+                H = int.from_bytes(hashlib.sha1(sigma).digest(), 'big')
+                print(self.eccGenerator)
+                Hpoint = tbp.ecc.scalar_mult(H, self.eccGenerator)
+                print(f"Hpoint: {Hpoint}")
+                Sstring = await websocket.recv()
+                S = self.unpackECPoint(Sstring)
+                print(f"Broker received S: {S}")
+                resp = self.publish(message[2:], S, Hpoint)
+
+            else:
+                resp = await self.receivedMsg(message, websocket)
+            print(resp)
             if len(resp) == 2:
                 await websocket.send(f"{len(resp[0])}")
                 for i in range(len(resp[0])):

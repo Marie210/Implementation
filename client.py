@@ -128,7 +128,7 @@ cli = client("Sophie")
 
 responseList, toplist = cli.messageExchangeBroker(cli.connectMsg())
 
-
+'''
 
 tokenList = []
 subjectList = []
@@ -149,7 +149,7 @@ resp = cli.messageExchangeBroker(cli.subscribeMsg("Pref/#"))
 
 
 
-'''
+
 
 '''
 top = b'\xf4\xf2v\xb4\xdb\xde\xd4\xa8\x12\x12\xc3\x84YJ\x19|\xcc\x15o\x89'

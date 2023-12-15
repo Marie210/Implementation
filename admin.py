@@ -25,8 +25,8 @@ class admin:
 
         tbp.eta.init(151)
         self.eccGenerator = tbp.ecc.gen()
-
         '''
+
         self.authenticationTokensForI = []
 
         for i in range(len(self.deviceResponseList)):
@@ -34,11 +34,8 @@ class admin:
                 private_key = int.from_bytes(self.deviceResponseList[i][j], 'big')
                 public_key = tbp.ecc.scalar_mult(private_key, self.eccGenerator)
                 self.authenticationTokensForI.append(public_key)
-        '''
-        '''
-        rd.seed(34)
-        private_key = rd.randint(0, (2**150))  #int.from_bytes(os.urandom(31), 'big')
-        self.brokerPublic_key = bls_pop.SkToPk(private_key)
+
+        print(self.authenticationTokensForI)
         '''
 
         userIdPointValue = int.from_bytes(hashlib.sha256("user".encode(encoding='UTF-8', errors='strict')).digest(),

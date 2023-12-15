@@ -67,6 +67,7 @@ class device:
         self.userIdPoint  = tbp.ecc.scalar_mult(userIdPointValue, self.eccGenerator)
 
 
+
     def chooseRightTopic(self, subject):
 
         i = self.subjectsList.index(subject)
@@ -77,7 +78,7 @@ class device:
         else:
             self.currentTopicList[i] = self.topicsList[i][len(self.topicsList[i])]
 
-        return topic
+        return topic,i,j
 
     def cypherMessage(self, msg, topName):
 
@@ -108,19 +109,38 @@ class device:
         uri = "ws://localhost:8765"
 
         async with websockets.connect(uri) as websocket:
-            print(f"Device sends message: {message}")
+            print(f"Device sends message: \n {message}")
             await websocket.send(message)
 
             response = await websocket.recv()
             print(f"Device received response: {response}")
 
 
+    async def communicatePublish(self, message,i, j):
+        uri = "ws://localhost:8765"
+        print(f"i, j : {i, j}")
+        async with websockets.connect(uri) as websocket:
+            print(f"Device sends message: \n {message}")
+            await websocket.send(message)
+
+            sigma = await websocket.recv()
+            H = int.from_bytes(hashlib.sha1(sigma).digest(), 'big')
+            Hpoint = tbp.ecc.scalar_mult(H, self.eccGenerator)
+            rij = int.from_bytes(self.responseList[i][j], 'big')
+            print(f"Pij : {tbp.ecc.scalar_mult(rij, self.eccGenerator)}")
+            S = tbp.ecc.scalar_mult(rij, Hpoint)
+            print(f"S: {S}")
+            await websocket.send(str(S))
+
+            response = await websocket.recv()
+            print(f"Device received response: {response}")
+
     def publishMessage(self, subject, content):
 
-        topic = self.chooseRightTopic(subject)
+        topic, i, j = self.chooseRightTopic(subject)
         cypheredText = self.cypherMessage(content, topic)
         message = '3 ' + self.prefix+ str(topic)[2:len(str(topic))-1] + ' ' + str(cypheredText)    #message structure : Flag Topic Content
-        asyncio.get_event_loop().run_until_complete(self.communicate(message))
+        asyncio.get_event_loop().run_until_complete(self.communicatePublish(message, i, j))
 
     def connectMessage(self):
         message = f"1 {self.name}"
@@ -131,11 +151,12 @@ dev = device("i")
 
 print("Device wants to send message 'Hello' to topic 'Alert' \n" )
 dev.publishMessage( "Alert", "Hello")
+'''
 print("Device wants to send message 'This is a test' to topic 'Alert' \n" )
 dev.publishMessage( "Alert", "This is a test")
-print("Device wants to send message 'his is the SOC' to topic 'StateOfCharge' \n" )
+print("Device wants to send message 'This is the SOC' to topic 'StateOfCharge' \n" )
 dev.publishMessage( "StateOfCharge", "This is the SOC")
-
+'''
 '''
 topName = b'\xb9ih\nIC\xd3\xe0\xdd(\xecG8\x7f\x13\x15\x04\xca\x16x'
 msg = "coucou"
