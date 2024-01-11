@@ -22,7 +22,6 @@ class admin:
         self.deviceIPrefix = "Pref"
         self.usersPSWRD = {"Sophie":  b'\x1fq,]x\x84s\x94\xc1\x84\xaa\xe3\x95\xc37\xf2J\x9a\x0eQ\x92*n\x0b\xea\t\xf0\xf4\x85H\x01\x94'}
         self.userAuthorization = {"Sophie":["Alert","StateOfCharge"]}
-
         tbp.eta.init(151)
         self.eccGenerator = tbp.ecc.gen()
         '''

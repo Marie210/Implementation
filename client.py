@@ -39,7 +39,27 @@ class client:
 
         userIdPointValue = int.from_bytes(hashlib.sha256("user".encode(encoding='UTF-8', errors='strict')).digest(),'big')
         self.userIdPoint = tbp.ecc.scalar_mult(userIdPointValue, self.eccGenerator)
+        self.y_mapping = {'Alert': b';c\xfc\xe7\xe5\xf6$\xae\x13Y\xd7\xb2\xda\xe0\x192u\x05\x92B',
+         'StateOfCharge': b'k\x05\xc1\x06\x93\xaf\r\xc2P\xec+\xc3\xc3OB\x11\x1eG\x85`'}
 
+
+    def findSubject(self, topName):
+
+        for elem in self.y_mapping:
+            if topName == self.y_mapping[elem]:
+                return elem
+
+        h = hashlib.sha1(topName).digest()
+        for elem in self.y_mapping:
+            if h == self.y_mapping[elem]:
+                return elem
+
+        h2 = hashlib.sha1(topName).digest()
+        for elem in self.y_mapping:
+            if h2 == self.y_mapping[elem]:
+                return elem
+
+        return 0
 
     def decypherMsg(self, msg, respPoint):
 
@@ -125,10 +145,10 @@ class client:
 
 
 cli = client("Sophie")
-
+'''
 responseList, toplist = cli.messageExchangeBroker(cli.connectMsg())
 
-'''
+
 
 tokenList = []
 subjectList = []
@@ -152,10 +172,12 @@ resp = cli.messageExchangeBroker(cli.subscribeMsg("Pref/#"))
 
 
 '''
-top = b'\xf4\xf2v\xb4\xdb\xde\xd4\xa8\x12\x12\xc3\x84YJ\x19|\xcc\x15o\x89'
-token = cli.messageExchangeAdmin(top)
-
+top = b'\xd3\x1b\xb9\x1d\x8f\xd0n"Z\xbf\xda\x9axc9\xd1Y\xa1P\xd4'
+print(cli.findSubject(top))
 '''
+#token = cli.messageExchangeAdmin(top)
+
+
 '''
 
 cli.messageExchangeBroker(cli.connectMsg())
