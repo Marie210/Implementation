@@ -10,11 +10,14 @@ from cryptography.fernet import Fernet
 import base64
 from statistics import mean
 
-broker = '192.168.1.52'
+broker = '192.168.1.51'
 port = 1883
 topic = "test"
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
-message_text = os.urandom(5)
+
+'''
+FIXED_SIZED = 50000
+message_text = os.urandom(FIXED_SIZED)
 resp = b'\x821\xa5\x1b\x1c-\x19\xb3JPh\xf8B\xe6\x8f;\xea\x97\x07\xedV\x93T\xddQ\x97\xe0\x0b\xcb\xce\x80p\xe8\xa0?\x1e\xb1\x82Z(\x19\xee[\x18\xc6\xbc\x9ej'
 
 tbp.eta.init(151)
@@ -23,7 +26,7 @@ deviceIdPointValue = int.from_bytes(hashlib.sha256("devicei".encode(encoding='UT
 deviceIdPoint = tbp.ecc.scalar_mult(deviceIdPointValue, eccGenerator)
 userIdPointValue = int.from_bytes(hashlib.sha256("user".encode(encoding='UTF-8', errors='strict')).digest(),'big')
 userIdPoint = tbp.ecc.scalar_mult(userIdPointValue, eccGenerator)
-
+'''
 def gen_fernet_key(passcode:bytes) -> bytes:
     assert isinstance(passcode, bytes)
     hlib = hashlib.sha256()
@@ -77,10 +80,10 @@ def publish(client,message_text,  resp, userIdPoint, deviceIdPoint):
          result = client.publish(topic, msg)
          # result: [0, 1]
          status = result[0]
-         if status == 0:
-             print(f"Send `{msg}` to topic `{topic}`")
-         else:
-             print(f"Failed to send message to topic {topic}")
+         #if status == 0:
+             #print(f"Send `{msg}` to topic `{topic}`")
+         #else:
+             #print(f"Failed to send message to topic {topic}")
          msg_count += 1
          if msg_count > 1:
              break
@@ -91,6 +94,7 @@ def run(message_text, resp, userIdPoint, deviceIdPoint):
     publish(client,message_text,  resp, userIdPoint, deviceIdPoint)
     client.loop_stop()
 
+'''
 iter = 10
 time_list = []
 for i in range(iter):
@@ -99,5 +103,8 @@ for i in range(iter):
     end = time.time()
     time_list.append(end - start)
     print(f"Time : {end - start} seconds")
+    message_text = os.urandom(FIXED_SIZED)
 
 print(f"Average time : {mean(time_list)}")
+
+'''
